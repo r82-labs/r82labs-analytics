@@ -86,28 +86,18 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create GitHub Release
-        id: create_release
+      - name: Create Release and Upload Asset
+        uses: softprops/action-gh-release@v2
         if: steps.check_release.outputs.exists == 'false'
-        uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-         tag_name: ${{ steps.set_tag_version.outputs.tag }}
-         release_name: Release ${{ steps.set_tag_version.outputs.tag }}
-         body: |
-           ## Release Notes
-           This is the release for tag ${{ steps.set_tag_version.outputs.tag }}. See commit history for detailed changes.
-         draft: false
-         prerelease: false
-
-      - name: Upload Release Asset
-        if: steps.create_release.outputs.upload_url != ''
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/r82labs_analytics-${{ steps.get_version.outputs.version }}.tar.gz
-          asset_name: r82labs-analytics-${{ steps.set_tag_version.outputs.tag }}.tar.gz
-          asset_content_type: application/gzip
+          tag_name: ${{ steps.set_tag_version.outputs.tag }}
+          name: Release ${{ steps.set_tag_version.outputs.tag }}
+          body: |
+            ## Release Notes
+            This is the release for tag ${{ steps.set_tag_version.outputs.tag }}. See commit history for detailed changes.
+          files: |
+            dist/r82labs_analytics-*.tar.gz
+          draft: false
+          prerelease: false
