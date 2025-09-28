@@ -1,4 +1,4 @@
-name: Main Braanch Actions
+name: Main Branch Actions
 
 on:
   push:
