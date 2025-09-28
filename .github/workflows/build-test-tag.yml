@@ -54,21 +54,40 @@ jobs:
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
       - name: Create and push tag if version updated
+        uses: actions/github-script@v7
+        id: tag_push
         if: github.ref == 'refs/heads/main'
+        with:
+          tag: ${{ steps.set_tag_version.outputs.tag }}
+          script: |
+            const tag = core.getInput('tag');
+            
+            try {
+              await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tag,
+              });
+              core.info(`Tag ${tag} already exists. Skipping tag creation.`);
+              return;
+            } catch (error) {
+              if (error.status !== 404) {
+                throw error;
+              }
+            }
+            
+            core.info(`Creating and pushing tag ${tag}...`);
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${tag}`,
+              sha: context.sha, // Tag at the current commit SHA
+            });
+            
+            core.setOutput('tag_created', 'true');
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          tag="${{ steps.set_tag_version.outputs.tag }}"
-          git fetch --tags
-          if git tag --list | grep -q "^$tag$"; then
-            echo "Tag $tag already exists. Skipping tag creation."
-            exit 0
-          fi
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag "$tag"
-          git push origin "$tag"
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Run poetry build
         run: poetry build
       
