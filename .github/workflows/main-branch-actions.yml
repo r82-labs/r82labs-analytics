@@ -15,6 +15,15 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3
+      
       - name: Set tag version
         id: set_tag_version
         run: |
