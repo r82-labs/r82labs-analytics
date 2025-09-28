@@ -108,6 +108,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/r82labs-analytics-${{ steps.get_version.outputs.version }}.tar.gz
+          asset_path: dist/r82labs_analytics-${{ steps.get_version.outputs.version }}.tar.gz
           asset_name: r82labs-analytics-${{ steps.set_tag_version.outputs.tag }}.tar.gz
           asset_content_type: application/gzip
