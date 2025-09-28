@@ -86,6 +86,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Run poetry publish
+      - name: 📦 Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
         if: steps.tag_push.outputs.tag_created == 'true'
-        run: poetry publish          
+
