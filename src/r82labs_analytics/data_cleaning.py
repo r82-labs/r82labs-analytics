@@ -2,6 +2,10 @@ import polars as pl
 import polars.selectors as cs
 
 
+def test():
+    return 1
+
+
 def default_empty_cells(df: pl.DataFrame) -> pl.DataFrame:
     """
     Fill missing values in a Polars DataFrame using column-specific logic.
