@@ -42,7 +42,7 @@ jobs:
       - name: Set tag version
         id: set_tag_version
         run: |
-          tag="v$(poetry version -s)
+          tag="v$(poetry version -s)"
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
       - name: Create and push tag
