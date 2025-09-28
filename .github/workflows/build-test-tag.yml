@@ -88,9 +88,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Run poetry build
+        if: steps.tag_push.outputs.tag_created == 'true'
         run: poetry build
       
       - name: Create Release and Upload Asset
+        if: steps.tag_push.outputs.tag_created == 'true'
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
