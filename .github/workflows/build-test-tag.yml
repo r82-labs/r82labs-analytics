@@ -58,7 +58,6 @@ jobs:
         id: tag_push
         if: github.ref == 'refs/heads/main'
         with:
-          tag: ${{ steps.set_tag_version.outputs.tag }}
           script: |
             const tag = core.getInput('tag');
             
