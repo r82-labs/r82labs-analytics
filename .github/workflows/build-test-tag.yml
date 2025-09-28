@@ -42,6 +42,7 @@ jobs:
             echo "Test coverage is less than 100% ($coverage%)"
             exit 1
           fi
+
       - name: Create and push tag if version updated
         if: github.ref == 'refs/heads/main'
         env:
@@ -58,15 +59,33 @@ jobs:
           git config user.email "github-actions@github.com"
           git tag "$tag"
           git push origin "$tag"
+
       - name: Get latest tag
         id: get_tag
         run: | 
           tag=$(git describe --tags --abbrev=0)
           echo "tag_name=$tag" >> $GITHUB_OUTPUT
+
       - name: Run poetry build
         run: poetry build
+
+      - name: Check if release exists
+        id: check_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${{ steps.get_tag.outputs.tag_name }}"
+          release_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/$tag"
+          status=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GH_TOKEN" "$release_url")
+          if [ "$status" -eq 200 ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create GitHub Release
         id: create_release
+        if: steps.check_release.outputs.exists == 'false'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,6 +97,7 @@ jobs:
            This is the release for tag ${{ steps.get_tag.outputs.tag_name }}. See commit history for detailed changes.
          draft: false
          prerelease: false
+
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         with:
