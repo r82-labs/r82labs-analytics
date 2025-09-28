@@ -85,3 +85,7 @@ jobs:
             dist/r82labs_analytics-*.tar.gz
           draft: false
           prerelease: false
+
+      - name: Run poetry publish
+        if: steps.tag_push.outputs.tag_created == 'true'
+        run: poetry publish          
