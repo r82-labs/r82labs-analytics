@@ -106,6 +106,8 @@ jobs:
       - name: Upload Release Asset
         if: steps.create_release.outputs.upload_url != ''
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/r82labs_analytics-${{ steps.get_version.outputs.version }}.tar.gz
