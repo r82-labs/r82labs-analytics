@@ -69,6 +69,9 @@ jobs:
       - name: Run poetry build
         run: poetry build
 
+      - name: List dist contents
+        run: ls -l dist   
+      
       - name: Check if release exists
         id: check_release
         env:
