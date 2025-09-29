@@ -18,6 +18,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "myst_nb",
 ]
 
 templates_path = ["_templates"]
@@ -29,3 +30,6 @@ exclude_patterns = []
 
 html_theme = "furo"
 html_static_path = ["_static"]
+
+nb_execution_mode = 'auto'
+nb_remove_code_cell_tags = ['remove-input']
